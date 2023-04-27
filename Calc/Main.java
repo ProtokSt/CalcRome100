@@ -10,53 +10,46 @@ import java.util.Scanner;
 
 Реализуй класс Main с методом public static String calc(String input).
 Метод должен принимать строку с арифметическим выражением между двумя числами и возвращать строку с результатом их выполнения.
-Ты можешь добавлять свои импорты, классы и методы. Добавленные классы не должны иметь модификаторы доступа (public или другие) */
+Ты можешь добавлять свои импорты, классы и методы. Добавленные классы не должны иметь модификаторы доступа (public или другие)
+
+Выполнил Protok, версия 1.02 */
 
 public class Main {
-    public static void main(String[] args) {
-        String welcomeMSG = new String("Привет Дорогой Друг! Это программа простого консольного калькулятора. Пожалуйста введи выражение в соответствии с форматом (X +-/* Y):");
-        Scanner scanInput = new Scanner(System.in);
+    static boolean _pdo = false; // print debug out
 
-        System.out.println(welcomeMSG);
+    public static void main(String[] args) {
+        System.out.println("Привет Дорогой Друг! Это программа простого консольного калькулятора. Пожалуйста введи выражение в соответствии с форматом (X +-/* Y):");
+        Scanner scanInput = new Scanner(System.in);
         String userInput = scanInput.nextLine();
-        IExpressionCheckAndSet Expression1 = new IExpressionCheckAndSet(userInput);
+        String output = calc(userInput);
+        System.out.println(output);
         scanInput.close();
     }
-}
-class IExpressionCheckAndSet{
-    private String [] elements;
-//    private final String [] acceptableArab = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", };
-//    private final String [] acceptableRoman = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",  };
-    private final String [] acceptableNumbers = {
-            "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
-            "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-    };
-    private int v1 = -1;
-    private boolean v1IsRome = false;
-    private int v2 = -1;
-    private boolean v2IsRome = false;
-    private int result1;
-    private Roman100[] x100 = Roman100.values();
-    public static boolean _pdo = false; // print debug out
-    //  functions
-    public static String getVersion(){ return "1.01"; }
-    public IExpressionCheckAndSet(String userInput){
+
+    public static String calc(String input){
 
         // check empty string
-        if (userInput.isEmpty()) {
+        if (input.isEmpty()) {
             try { throw new IOException(); }
-            catch (IOException e) { System.err.println("Получена пустая строка. Пожалуйста введи подходящее выражение. (X +-/* Y)."); return; }
+            catch (IOException e) { System.err.println("Получена пустая строка. Пожалуйста введи подходящее выражение. (X +-/* Y)."); return null; }
         }
 
         // check minimum string length
-        else if (userInput.length() < 5) {
+        else if (input.length() < 5) {
             try { throw new IOException(); }
-            catch (IOException e) { System.err.println("В выражении верного формата должно быть не менее 5 символов с учётом пробелов. Пожалуйста введи заново. (X +-/* Y)."); return; } }
+            catch (IOException e) { System.err.println("В выражении верного формата должно быть не менее 5 символов с учётом пробелов. Пожалуйста введи заново. (X +-/* Y)."); return null; } }
         else {
             // gather input
-            if (_pdo) { System.out.println("start to check and gather info from input: "+userInput); }
+            if (_pdo) { System.out.println("start to check and gather info from input: "+input); }
+
             // vars
-            elements = userInput.split(" ");
+            String[] elements = input.split(" ");
+            int v1 = -1;
+            boolean v1IsRome = false;
+            int v2 = -1;
+            boolean v2IsRome = false;
+            int result1;
+            String result2;
             if (_pdo) {
                 short i = 0;
                 for (String element: elements){
@@ -68,16 +61,20 @@ class IExpressionCheckAndSet{
             // check number of elements of expression
             if (elements.length > 3 ) {
                 try { throw new IOException(); }
-                catch (IOException e) { System.err.println("Получено больше эелементов выражения, чем требуется по заданному формату - два операнда и один оператор. Пожалуйста введи ещё раз (X +-/* Y)."); return; }
+                catch (IOException e) { System.err.println("Получено больше эелементов выражения, чем требуется по заданному формату - два операнда и один оператор. Пожалуйста введи ещё раз (X +-/* Y)."); return null; }
             }
             if (elements.length < 3) {
                 try { throw new IOException(); }
-                catch (IOException e) { System.err.println("Получено меньше эелементов выражения, чем требуется по заданному формату операции. Пожалуйста введи ещё раз (X +-/* Y)."); return; }
+                catch (IOException e) { System.err.println("Получено меньше эелементов выражения, чем требуется по заданному формату операции. Пожалуйста введи ещё раз (X +-/* Y)."); return null; }
             }
 
             // set acceptable numbers and lang
+            String[] acceptableNumbers = {
+                    "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+                    "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+            };
             for (short i = 0; i < acceptableNumbers.length; i++) {
-                if (_pdo) { System.out.println("elements[0]: "+elements[0]+", acceptableNumbers[i]: "+acceptableNumbers[i]); }
+                if (_pdo) { System.out.println("elements[0]: "+ elements[0]+", acceptableNumbers[i]: "+ acceptableNumbers[i]); }
                 if (Objects.equals(acceptableNumbers[i], elements[0])) {
                     if (i < 10) {
                         v1IsRome = true;
@@ -104,36 +101,22 @@ class IExpressionCheckAndSet{
                 }
             }
 
-            // check is numbers was acceptable
+            // check is numbers acceptable
             if (v1 == -1 ) {
                 try { throw new IOException(); }
-                catch (IOException e) { System.err.println("Недопустимое первое число. К вводу допустимы положительные числа величиной от 1 до 10. Пожалуйста введи ещё раз."); return; }
+                catch (IOException e) { System.err.println("Недопустимое первое число. К вводу допустимы положительные числа величиной от 1 до 10. Пожалуйста введи ещё раз."); return null; }
             }
             if (v2 == -1 ) {
                 try { throw new IOException(); }
-                catch (IOException e) { System.err.println("Недопустимое второе число. К вводу допустимы положительные числа величиной от 1 до 10. Пожалуйста введи ещё раз."); return; }
+                catch (IOException e) { System.err.println("Недопустимое второе число. К вводу допустимы положительные числа величиной от 1 до 10. Пожалуйста введи ещё раз."); return null; }
             }
 
             // check numbers language equal to each other
             if (v1IsRome != v2IsRome){
                 try { throw new IOException(); }
-                catch (IOException e) { System.err.println("Оба числа одновременно необходимо ввести или римским или арабским письмом. Пожалуйста введи ещё раз."); return; }
+                catch (IOException e) { System.err.println("Оба числа одновременно необходимо ввести или римским или арабским письмом. Пожалуйста введи ещё раз."); return null; }
             }
-
-            // set vars, unused
-//            v1 = parseInt(elements[0], 10);
-//            v2 = parseInt(elements[2], 10);
-            if (_pdo) { System.out.println("v1: "+v1+", v2: "+v2); }
-
-            // check numbers value not higher than 10 and no less than 1. obsolete
-//            if (v1 < 1 || v1 > 10) {
-//                try { throw new IOException(); }
-//                catch (IOException e) { System.err.println("К вводу допустимы положительные числа величиной от 1 до 10. Пожалуйста введи ещё раз."); return; }
-//            }
-//            if (v2 < 1 || v2 > 10) {
-//                try { throw new IOException(); }
-//                catch (IOException e) { System.err.println("К вводу допустимы положительные числа величиной от 1 до 10. Пожалуйста введи ещё раз."); return; }
-//            }
+            if (_pdo) { System.out.println("v1: "+ v1 +", v2: "+ v2); }
 
             // check and do operation
             switch (elements[1]){
@@ -152,21 +135,28 @@ class IExpressionCheckAndSet{
                     break;
                 case default :
                     try { throw new IOException(); }
-                    catch (IOException e) { System.err.println("Полученое действие не соотвествует заданному формату выражения. Пожалуйста введи ещё раз. (X +-/* Y)."); return; }
+                    catch (IOException e) { System.err.println("Полученое действие не соотвествует заданному формату выражения. Пожалуйста введи ещё раз. (X +-/* Y)."); return null; }
             }
 
             // check result for Roman > 0
             if (v1IsRome && result1 < 1){
                 try { throw new IOException(); }
-                catch (IOException e) { System.err.println("Результат действия с римскими цифрами должен быть больше 0. Попробуй ввести другой пример."); return; }
+                catch (IOException e) { System.err.println("Результат действия с римскими цифрами должен быть больше 0. Попробуй ввести другой пример."); return null; }
             }
+
             // print result
             if (v1IsRome){
-                System.out.println(x100[result1-1]);
+                Roman100[] x100 = Roman100.values();
+//                System.out.println(x100[result1 -1]);
+                result2 = String.valueOf(x100[result1 -1]);
             } else {
-                System.out.println(result1);
+//                System.out.println(result1);
+                result2 = String.valueOf(result1);
             }
-        }
+            return result2;
+
+         }
     }
 }
+
 
