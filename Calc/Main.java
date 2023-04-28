@@ -12,7 +12,7 @@ import java.util.Scanner;
 Метод должен принимать строку с арифметическим выражением между двумя числами и возвращать строку с результатом их выполнения.
 Ты можешь добавлять свои импорты, классы и методы. Добавленные классы не должны иметь модификаторы доступа (public или другие)
 
-Выполнил Protok, версия 1.02 */
+Выполнил Protok, версия 1.03 */
 
 public class Main {
     static boolean _pdo = false; // print debug out
@@ -22,7 +22,7 @@ public class Main {
         Scanner scanInput = new Scanner(System.in);
         String userInput = scanInput.nextLine();
         String output = calc(userInput);
-        System.out.println(output);
+        if (output != null){ System.out.println(output); }
         scanInput.close();
     }
 
